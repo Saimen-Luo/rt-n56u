@@ -44,6 +44,7 @@ mkdir -p -m 777 /var/state/parport/svr_statue
 mkdir -p -m 777 /tmp/var
 mkdir -p -m 777 /tmp/hashes
 mkdir -p -m 777 /tmp/modem
+mkdir -p -m 777 /tmp/dnsmasq.d
 mkdir -p -m 777 /tmp/rc_notification
 mkdir -p -m 777 /tmp/rc_action_incomplete
 mkdir -p -m 700 /home/root
