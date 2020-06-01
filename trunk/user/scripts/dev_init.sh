@@ -64,6 +64,9 @@ if [ -f /etc_ro/openssl.cnf ]; then
 	cp -f /etc_ro/openssl.cnf /etc/ssl
 fi
 
+cp -r /etc_ro/ssl/certs /etc/ssl
+ln -sf /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
+
 # create symlinks
 ln -sf /home/root /home/admin
 ln -sf /proc/mounts /etc/mtab

@@ -172,6 +172,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_xTUN) 			+= xTun
 dir_$(CONFIG_FIRMWARE_INCLUDE_WING) 			+= wing
 dir_$(CONFIG_FIRMWARE_INCLUDE_WING) 			+= ipt2socks
 dir_$(CONFIG_FIRMWARE_INCLUDE_REDSOCKS)			+= redsocks
+dir_$(CONFIG_FIRMWARE_INCLUDE_CA_BUNDLE)                += ca-bundle
 
 ifdef CONFIG_BLK_DEV_SD
 dir_$(CONFIG_FIRMWARE_INCLUDE_HDPARM)		+= hdparm
