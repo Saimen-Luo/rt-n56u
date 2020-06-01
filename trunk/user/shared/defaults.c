@@ -279,7 +279,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_macmode", "disabled" },
 	{ "rt_mrate", "2" },
 	{ "rt_mode", "ap" },
-	{ "rt_HT_BW", "1" },
+	{ "rt_HT_BW", "0" },
 	{ "rt_HT_EXTCHA", "1" },
 	{ "rt_HT_OpMode", "0" },
 	{ "rt_wme", "0" },
@@ -405,7 +405,7 @@ struct nvram_pair router_defaults[] = {
 	{ "hdd_spindt", "0" },
 	{ "hdd_apmoff", "0" },
 
-	{ "ip6_service", "" },
+	{ "ip6_service", "dhcp6" },
 	{ "ip6_ppe_on", "0" },
 	{ "ip6_wan_if", "0" },
 
@@ -423,12 +423,12 @@ struct nvram_pair router_defaults[] = {
 	{ "ip6_wan_size", "64" },
 	{ "ip6_wan_gate", "" },
 
-	{ "ip6_dns_auto", "0" },
+	{ "ip6_dns_auto", "1" },
 	{ "ip6_dns1", "" },
 	{ "ip6_dns2", "" },
 	{ "ip6_dns3", "" },
 
-	{ "ip6_lan_auto", "0" },
+	{ "ip6_lan_auto", "1" },
 	{ "ip6_lan_addr", "" },
 	{ "ip6_lan_size", "64" },
 	{ "ip6_lan_radv", "1" },
