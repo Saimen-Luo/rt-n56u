@@ -297,6 +297,7 @@ start_dns_dhcpd(int is_ap_mode)
 	char dhcp_start[32], dhcp_end[32], dns_all[64], dnsv6[40];
 	char *ipaddr, *netmask, *gw, *dns1, *dns2, *dns3, *wins, *domain, *dns6;
 	const char *storage_dir = "/etc/storage/dnsmasq";
+	const char *resolv_temp_auto = "/tmp/resolv.conf.auto";
 
 	i_dhcp_enable = is_dhcpd_enabled(is_ap_mode);
 	i_verbose = nvram_get_int("dhcp_verbose");
@@ -317,6 +318,7 @@ start_dns_dhcpd(int is_ap_mode)
 		
 		/* touch resolv.conf if not exist */
 		create_file(DNS_RESOLV_CONF);
+		create_file(resolv_temp_auto);
 	}
 
 	/* create /etc/dnsmasq.conf */
@@ -325,6 +327,7 @@ start_dns_dhcpd(int is_ap_mode)
 
 	fprintf(fp, "user=%s\n"
 		    "resolv-file=%s\n"
+		    "conf-dir=/tmp/dnsmasq.d\n"
 		    "no-poll\n"
 		    "bogus-priv\n"
 		    "no-negcache\n"
@@ -332,7 +335,7 @@ start_dns_dhcpd(int is_ap_mode)
 		    "bind-dynamic\n"
 		    "interface=%s\n",
 		    SYS_USER_NOBODY,
-		    DNS_RESOLV_CONF,
+		    resolv_temp_auto,
 		    IFNAME_BR);
 
 	if (!is_ap_mode) {

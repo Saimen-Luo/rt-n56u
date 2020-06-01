@@ -1669,7 +1669,8 @@ update_resolvconf(int is_first_run, int do_not_notify)
 	FILE *fp;
 	char word[512], *next, *wan_dns;
 	const char *google_dns = "8.8.8.8";
-	const char *resolv_temp = "/etc/resolv.tmp";
+	const char *resolv_temp = "/tmp/resolv.conf.tmp";
+	const char *resolv_temp_auto = "/tmp/resolv.conf.auto";
 	int i, i_pdns, i_total_dns = 0;
 	int lock, dns_static, resolv_changed = 0;
 
@@ -1681,11 +1682,13 @@ update_resolvconf(int is_first_run, int do_not_notify)
 	i_pdns = nvram_get_int("vpnc_pdns");
 	dns_static = get_wan_dns_static();
 
-	fp = fopen((is_first_run) ? DNS_RESOLV_CONF : resolv_temp, "w+");
-	if (fp) {
+	if (is_first_run) {
+		fp = fopen(DNS_RESOLV_CONF, "w+");
 		/* dnsmasq will resolve localhost DNS queries */
 		fprintf(fp, "nameserver %s\n", "127.0.0.1");
+		fclose(fp);
 		
+		fp = fopen(resolv_temp_auto, "w+");
 		/* DNS servers for static VPN client */
 		if (!is_first_run && i_pdns > 0) {
 			wan_dns = nvram_safe_get("vpnc_dns_t");
@@ -1751,8 +1754,69 @@ update_resolvconf(int is_first_run, int do_not_notify)
 	}
 
 	if (!is_first_run) {
-		if (compare_text_files(DNS_RESOLV_CONF, resolv_temp) != 0) {
-			rename(resolv_temp, DNS_RESOLV_CONF);
+		fp = fopen(resolv_temp, "w+");
+		/* DNS servers for static VPN client */
+		if (!is_first_run && i_pdns > 0) {
+			wan_dns = nvram_safe_get("vpnc_dns_t");
+			if (strlen(wan_dns) > 6) {
+				foreach(word, wan_dns, next) {
+					if (is_valid_ipv4(word)) {
+						fprintf(fp, "nameserver %s\n", word);
+						i_total_dns++;
+					}
+				}
+			}
+		}
+
+		/* DNS servers for WAN/MAN */
+		if (i_pdns != 2 || i_total_dns < 1) {
+			if (dns_static) {
+				char dns_name_x[16];
+
+				for (i = 1; i <= 3; i++) {
+					sprintf(dns_name_x, "wan_dns%d_x", i);
+					wan_dns = nvram_safe_get(dns_name_x);
+					if (is_valid_ipv4(wan_dns)) {
+						fprintf(fp, "nameserver %s\n", wan_dns);
+						i_total_dns++;
+					}
+				}
+
+			} else if (!is_first_run) {
+				wan_dns = get_wan_unit_value(0, "dns");
+				if (strlen(wan_dns) < 7)
+					wan_dns = nvram_safe_get("wanx_dns");
+
+				foreach(word, wan_dns, next) {
+					if (is_valid_ipv4(word)) {
+						fprintf(fp, "nameserver %s\n", word);
+						i_total_dns++;
+					}
+				}
+			}
+		}
+
+		if (i_total_dns < 1)
+			fprintf(fp, "nameserver %s\n", google_dns);
+
+#if defined (USE_IPV6)
+		/* DNSv6 servers */
+		wan_dns = get_wan_unit_value(0, "dns6");
+		foreach(word, wan_dns, next) {
+			if (strlen(word) > 0) {
+				char dns6s[INET6_ADDRSTRLEN] = {0};
+				if (ipv6_compact(word, dns6s, 0) == 0) {
+					fprintf(fp, "nameserver %s\n", dns6s);
+				}
+			}
+		}
+#endif
+		fclose(fp);
+	}
+
+	if (!is_first_run) {
+		if (compare_text_files(resolv_temp_auto, resolv_temp) != 0) {
+			rename(resolv_temp, resolv_temp_auto);
 			resolv_changed = 1;
 		}
 		unlink(resolv_temp);
