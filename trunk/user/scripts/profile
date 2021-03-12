@@ -18,7 +18,7 @@ alias df='df -Th'
 alias ps='ps ww'
 alias ls='ls -hF --color=auto'
 alias ll='ls -AlhF --color=auto'
-alias htop='htop -t'
+# alias htop='htop -t'
 alias lr='tail -f /tmp/syslog.log'
 export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 alias lst='cat /tmp/syslog.log | grep speedtest'
