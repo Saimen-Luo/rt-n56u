@@ -15,6 +15,8 @@ cp -f configs/templates/$1.config .config
 
 # add openssl exe for wget to support ssl
 sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
+# add lrzsz for ttyd
+sed -i 's/CONFIG_FIRMWARE_INCLUDE_LRZSZ=n/CONFIG_FIRMWARE_INCLUDE_LRZSZ=y/g' .config
 
 ROOTDIR=`pwd`
 export ROOTDIR=$ROOTDIR
